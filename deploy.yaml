@@ -1,0 +1,301 @@
+---
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: inventory
+  name: inventory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      containers:
+      - name: inventory
+        image: joseangelgarciaarcos/inventory:0.0.2
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 8060
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: inventory
+  name: inventory
+spec:
+  #type: LoadBalancer
+  ports:
+  - port: 8060
+    protocol: TCP
+    targetPort: 8060
+  selector:
+    app: inventory
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: inventory
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: inventory
+  minReplicas: 1
+  maxReplicas: 3
+  metrics: 
+  - type: Resource 
+    resource: 
+      name: cpu 
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource 
+    resource: 
+      name: memory
+      target:
+        type: Utilization
+        averageValue: 200Mi
+---
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: portafoliofront
+  name: portafoliofront 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portafoliofront
+  template:
+    metadata:
+      labels:
+        app: portafoliofront 
+    spec:
+      containers:
+      - name: portafoliofront
+        image: joseangelgarciaarcos/portafolio-front:0.0.1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 7100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: portafoliofront
+  name: portafoliofront
+spec:
+  #type: LoadBalancer
+  ports:
+  - port: 7100
+    protocol: TCP
+    targetPort: 7100
+  selector:
+    app: portafoliofront
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: portafoliofront
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: portafoliofront
+  minReplicas: 1
+  maxReplicas: 3
+  metrics: 
+  - type: Resource 
+    resource: 
+      name: cpu 
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource 
+    resource: 
+      name: memory
+      target:
+        type: Utilization
+        averageValue: 200Mi
+---
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: netcore
+  name: netcore 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netcore
+  template:
+    metadata:
+      labels:
+        app: netcore 
+    spec:
+      containers:
+      - name: netcore
+        image: joseangelgarciaarcos/netcore:0.0.1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: netcore
+  name: netcore
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 30000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: netcore
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: netcore
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: netcore
+  minReplicas: 1
+  maxReplicas: 3
+  metrics: 
+  - type: Resource 
+    resource: 
+      name: cpu 
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource 
+    resource: 
+      name: memory
+      target:
+        type: Utilization
+        averageValue: 200Mi
+---
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nodejs
+  name: nodejs 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs
+  template:
+    metadata:
+      labels:
+        app: nodejs 
+    spec:
+      containers:
+      - name: nodejs
+        image: joseangelgarciaarcos/nodejs:0.0.1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: NODE_ENV
+          value: development
+        ports:
+        - containerPort: 9100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nodejs
+  name: nodejs
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 9100
+    protocol: TCP
+    targetPort: 9100
+  selector:
+    app: nodejs
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nodejs
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nodejs
+  minReplicas: 1
+  maxReplicas: 3
+  metrics: 
+  - type: Resource 
+    resource: 
+      name: cpu 
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource 
+    resource: 
+      name: memory
+      target:
+        type: Utilization
+        averageValue: 200Mi
+---
